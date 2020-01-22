@@ -20,7 +20,7 @@ import (
 // Requirements:
 // First few bytes must contain 0s
 
-const Difficulty = 18
+const Difficulty = 12
 
 type ProofOfWork struct {
 	Block  *Block
@@ -40,7 +40,7 @@ func (pow *ProofOfWork) InitData(nonce int) []byte {
 	data := bytes.Join(
 		[][]byte{
 			pow.Block.PrevHash,
-			pow.Block.Data,
+			pow.Block.HarshTransactions(),
 			ToHex(int64(nonce)),
 			ToHex(int64(Difficulty)),
 		},
@@ -59,7 +59,7 @@ func (pow *ProofOfWork) Run() (int, []byte) {
 		data := pow.InitData(nonce)
 		hash = sha256.Sum256(data)
 
-		fmt.Printf("\r%x", hash)
+		// fmt.Printf("\r%x", hash)
 		intHash.SetBytes(hash[:])
 
 		if intHash.Cmp(pow.Target) == -1 {
